@@ -14,7 +14,7 @@ import os
 app = Flask(__name__)
 
 app.debug = False #Change this to False for production
-#os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Remove once done debugging
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Remove once done debugging
 
 app.secret_key = os.environ['SECRET_KEY'] #used to sign session cookies
 oauth = OAuth(app)
@@ -48,7 +48,7 @@ def home():
 #redirect to GitHub's OAuth page and confirm callback URL
 @app.route('/login')
 def login():   
-    return github.authorize(callback=url_for('authorized', _external=True, _scheme='https')) #callback URL must match the pre-configured callback URL
+    return github.authorize(callback=url_for('authorized', _external=True, _scheme='http')) #callback URL must match the pre-configured callback URL
 
 @app.route('/logout')
 def logout():
@@ -80,12 +80,20 @@ def renderPage1():
     if 'user_data' in session:
         user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
     else:
-        user_data_pprint = '';
+        user_data_pprint = ''
     return render_template('page1.html',dump_user_data=user_data_pprint)
 
 @app.route('/page2')
 def renderPage2():
-    return render_template('page2.html')
+    if 'user_data' in session:
+        user_data_pprint_location = pprint.pformat(session['user_data']['location'])
+        user_data_pprint_followers = pprint.pformat(session['user_data']['followers'])
+        user_data_pprint_name = pprint.pformat(session['user_data']['name'])
+    else:
+        user_data_pprint_location = ''
+        user_data_pprint_followers = ''
+        user_data_pprint_name = ''
+    return render_template('page2.html', dump_user_data_location = user_data_pprint_location, dump_user_data_followers = user_data_pprint_followers, dump_user_data_name = user_data_pprint_name,)
 
 @app.route('/googleb4c3aeedcc2dd103.html')
 def render_google_verification():
