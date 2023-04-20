@@ -1,15 +1,20 @@
 from flask import Flask, redirect, url_for, session, request, jsonify
 from flask_oauthlib.client import OAuth
-#from flask_oauthlib.contrib.apps import github #import to make requests to GitHub's OAuth
 from flask import render_template
-
-import pprint
+import pymongo
+from pymongo import InsertOne, DeleteOne, ReplaceOne
 import os
+import sys
+import pprint
+from bson.objectid import ObjectId
 
-# This code originally from https://github.com/lepture/flask-oauthlib/blob/master/example/github.py
-# Edited by P. Conrad for SPIS 2016 to add getting Client Id and Secret from
-# environment variables, so that this will work on Heroku.
-# Edited by S. Adams for Designing Software for the Web to add comments and remove flash messaging
+def main():
+    connection_string = os.environ["MONGO_CONNECTION_STRING"]
+    db_name = os.environ["MONGO_DBNAME"]
+    
+    client = pymongo.MongoClient(connection_string)
+    db = client[db_name]
+    collection = db['DronesCollection'] #1. put the name of your collection in the quotes
 
 app = Flask(__name__)
 

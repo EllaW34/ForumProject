@@ -5,3 +5,13 @@ body {
 #content {
      margin-left: 20px;
 }
+
+#post {
+    background-color: rgb(227, 232, 255);
+    border-color: rgb(57, 64, 97);
+    border-style: solid;
+    border-radius: 7px;
+    margin-left: 15%;
+    margin-right: 40%;
+    padding: 10px;
+}
