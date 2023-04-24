@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, session, request, jsonify
+from flask import Flask, redirect, url_for, session, request, jsonify, Markup
 from flask_oauthlib.client import OAuth
 from flask import render_template
 import pymongo
@@ -7,18 +7,19 @@ import os
 import sys
 import pprint
 from bson.objectid import ObjectId
+from datetime import date, time, datetime
 
-def main():
-    connection_string = os.environ["MONGO_CONNECTION_STRING"]
-    db_name = os.environ["MONGO_DBNAME"]
+
+connection_string = os.environ["MONGO_CONNECTION_STRING"]
+db_name = os.environ["MONGO_DBNAME"]
     
-    client = pymongo.MongoClient(connection_string)
-    db = client[db_name]
-    collection = db['DronesCollection'] #1. put the name of your collection in the quotes
-
+client = pymongo.MongoClient(connection_string)
+db = client[db_name]
+collection = db['DronesCollection'] #1. put the name of your collection in the quotes
+    
 app = Flask(__name__)
 
-app.debug = False #Change this to False for production
+app.debug = True #Change this to False for production
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Remove once done debugging
 
 app.secret_key = os.environ['SECRET_KEY'] #used to sign session cookies
@@ -79,26 +80,30 @@ def authorized():
             message='Unable to login, please try again.  '
     return render_template('message.html', message=message)
 
+@app.route('/newPost', methods=['GET', 'POST'])
+def renderNewPost():
+    print("test")
+    if request.method == 'POST':
+        username = pprint.pformat(session["user_data"]["login"])
+        today = date.today()
+        today = today.strftime("%m/%d/%Y")
+        title = request.form["title"]
+        text = request.form["text"]
+        
+        post = {"username": username[1:-1], "date": str(today), "title": title, "text": text}
+        collection.insert_one(post)
+    return redirect('/page1')
 
-@app.route('/page1')
+@app.route('/page1', methods=['GET', 'POST'])
 def renderPage1():
-    if 'user_data' in session:
-        user_data_pprint = pprint.pformat(session['user_data'])#format the user data nicely
-    else:
-        user_data_pprint = ''
-    return render_template('page1.html',dump_user_data=user_data_pprint)
+    session["posts"] = ""    
+    for doc in collection.find():
+        session["posts"] += Markup("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p></div><br>")
+    return render_template('page1.html')
 
-@app.route('/page2')
-def renderPage2():
-    if 'user_data' in session:
-        user_data_pprint_location = pprint.pformat(session['user_data']['location'])
-        user_data_pprint_followers = pprint.pformat(session['user_data']['followers'])
-        user_data_pprint_name = pprint.pformat(session['user_data']['name'])
-    else:
-        user_data_pprint_location = ''
-        user_data_pprint_followers = ''
-        user_data_pprint_name = ''
-    return render_template('page2.html', dump_user_data_location = user_data_pprint_location, dump_user_data_followers = user_data_pprint_followers, dump_user_data_name = user_data_pprint_name,)
+@app.route('/addPost')
+def renderAddPost():      
+    return render_template('addPost.html')
 
 @app.route('/googleb4c3aeedcc2dd103.html')
 def render_google_verification():

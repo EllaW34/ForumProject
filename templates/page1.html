@@ -3,13 +3,11 @@
 {% block title %}page1{% endblock %}
 
 {% block content %}
-  <h1>Drones</h1>
 
-<div id="post">
-<p>Username</p>
-<p>Date</p>
-<h1>Title</h1>
-<p>Text</p>
+<div id="add">
+<a href="/addPost">Add Post +</a>
 </div>
+<br>
+{{session["posts"]}}
 
 {% endblock %}

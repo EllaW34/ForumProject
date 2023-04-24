@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+
+{% block title %}Add Post{% endblock %}
+
+{% block content %}
+
+
+{% if logged_in %}
+{% endif %}
+  {% if logged_in %}
+  <form action="/newPost" id="makePost" method="post">
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" required><br><br>
+    <label for="text">Text:</label><br>
+    <textarea name="text" rows="10" cols="115" required></textarea><br><br>
+    <input type="submit" value="Submit">
+  </form>
+  {% else %}
+  <p>Please login before posting</p>
+  {% endif %}
+
+  
+{% endblock %}
