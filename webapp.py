@@ -1,4 +1,4 @@
-from flask import Flask, redirect, url_for, session, request, jsonify, Markup
+from flask import Flask, flash, redirect, url_for, session, request, jsonify, Markup
 from flask_oauthlib.client import OAuth
 from flask import render_template
 import pymongo
@@ -59,26 +59,27 @@ def login():
 @app.route('/logout')
 def logout():
     session.clear()
-    return render_template('message.html', message='You were logged out')
+    flash('You were logged out.')
+    return redirect('/')
 
 @app.route('/login/authorized')
 def authorized():
     resp = github.authorized_response()
     if resp is None:
         session.clear()
-        message = 'Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args)      
+        flash('Access denied: reason=' + request.args['error'] + ' error=' + request.args['error_description'] + ' full=' + pprint.pformat(request.args), 'error')
     else:
         try:
             session['github_token'] = (resp['access_token'], '') #save the token to prove that the user logged in
             session['user_data']=github.get('user').data
             #pprint.pprint(vars(github['/email']))
             #pprint.pprint(vars(github['api/2/accounts/profile/']))
-            message='You were successfully logged in as ' + session['user_data']['login'] + '.'
+            flash('You were successfully logged in as ' + session['user_data']['login'] + '.')
         except Exception as inst:
             session.clear()
             print(inst)
-            message='Unable to login, please try again.  '
-    return render_template('message.html', message=message)
+            flash('Unable to login, please try again.  ', 'error')
+    return redirect('/')
 
 @app.route('/newPost', methods=['GET', 'POST'])
 def renderNewPost():
@@ -98,12 +99,17 @@ def renderNewPost():
 def renderPage1():
     session["posts"] = ""    
     for doc in collection.find():
-        session["posts"] += Markup("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p></div><br>")
+        session["posts"] += Markup("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><a href=\"/reply\" id=\"reply\">Reply</a></div><br>")
     return render_template('page1.html')
 
 @app.route('/addPost')
 def renderAddPost():      
     return render_template('addPost.html')
+    
+@app.route('/reply')
+def renderReply():
+    session['comment'] = "<textarea name=\"text\" rows=\"10\" cols=\"115\" required></textarea><br>"
+    return redirect('/page1')
 
 @app.route('/googleb4c3aeedcc2dd103.html')
 def render_google_verification():

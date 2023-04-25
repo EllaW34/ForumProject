@@ -64,11 +64,29 @@ body {
 }
 
 #words {
-    font-size: 20px;
-    font-weight: 100;
-    
+    font-size: 15px;
+    font-weight: 300;  
 }
 
-h1 {
-    font-weight: bold;
+#title {
+    font-size: 22.5px;
+    font-weight: 600;
+}
+
+#stupid {
+    margin-left: 0.5%;
+    margin-right: 0.5%;
+}
+
+#reply {
+    font-size: 12.5px;
+    background-color: rgb(252, 154, 228);
+    border-color: rgb(209, 92, 138);
+    border-style: solid;
+    border-radius: 7.5px;
+    border-width: 2px;
+    padding-top: 2.5px;
+    padding-bottom: 2.5px;
+    padding-right: 7.5px;
+    padding-left: 7.5px;
 }
