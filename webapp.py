@@ -98,17 +98,22 @@ def renderNewPost():
 @app.route('/page1', methods=['GET', 'POST'])
 def renderPage1():
     session["posts"] = ""    
+    session["list"] = []
     for doc in collection.find():
-        session["posts"] += Markup("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><a href=\"/reply\" id=\"reply\">Reply</a></div><br>")
+        number = len(session["list"])
+        session["list"].append("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><form action=\"/reply\"><input type=\"hidden\" id=\"reply\" name=\"position\" value=\"" + str(number) + "\"><input type=\"button\" action=\"/reply\" id=\"reply\" value=\"Reply\"></form><div id=\"hidden\"><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>")
+    for new in session["list"]:
+        session["posts"] += Markup(new)
     return render_template('page1.html')
 
 @app.route('/addPost')
-def renderAddPost():      
+def renderAddPost():   
     return render_template('addPost.html')
     
 @app.route('/reply')
 def renderReply():
-    session['comment'] = "<textarea name=\"text\" rows=\"10\" cols=\"115\" required></textarea><br>"
+    position = request.args["position"]
+    session["list"][position] = "<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><form action=\"/reply\"><input type=\"hidden\" id=\"reply\" name=\"position\" value=\"" + str(number) + "\"><input type=\"button\" action=\"/reply\" id=\"reply\" value=\"Reply\"></form><div><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>"
     return redirect('/page1')
 
 @app.route('/googleb4c3aeedcc2dd103.html')

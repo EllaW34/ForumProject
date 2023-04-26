@@ -82,11 +82,15 @@ body {
     font-size: 12.5px;
     background-color: rgb(252, 154, 228);
     border-color: rgb(209, 92, 138);
+    color: rgb(255, 255, 255);
     border-style: solid;
     border-radius: 7.5px;
     border-width: 2px;
     padding-top: 2.5px;
-    padding-bottom: 2.5px;
     padding-right: 7.5px;
     padding-left: 7.5px;
+}
+
+#hidden {
+    display: none;
 }
