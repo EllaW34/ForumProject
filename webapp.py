@@ -101,7 +101,7 @@ def renderPage1():
     session["list"] = []
     for doc in collection.find():
         number = len(session["list"])
-        session["list"].append("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><form action=\"/reply\"><input type=\"hidden\" id=\"reply\" name=\"position\" value=\"" + str(number) + "\"><input type=\"button\" action=\"/reply\" id=\"reply\" value=\"Reply\"></form><div id=\"hidden\"><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>")
+        session["list"].append("<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><button type=\"button\" id=\"" + str(doc["_id"]) + "\">Reply</button><div id=\"" + str(doc["_id"]) + "-Hide" + "\" class=\"hidden\"><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>")
     for new in session["list"]:
         session["posts"] += Markup(new)
     return render_template('page1.html')
@@ -112,9 +112,13 @@ def renderAddPost():
     
 @app.route('/reply')
 def renderReply():
-    position = request.args["position"]
-    session["list"][position] = "<div id=\"post\"><p>" + doc["username"] + "</p><p>" + doc["date"] + "</p><p id=\"title\">" + doc["title"] + "</p><p id=\"words\">" + doc["text"] + "</p><form action=\"/reply\"><input type=\"hidden\" id=\"reply\" name=\"position\" value=\"" + str(number) + "\"><input type=\"button\" action=\"/reply\" id=\"reply\" value=\"Reply\"></form><div><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>"
-    return redirect('/page1')
+    #print("test")
+    #position = request.args["position"]
+    #print(position)
+    #print(collection.find_one({"_id": ObjectId(position)})["username"])
+    #session["list"[position]] = "<div id=\"post\"><p>" + collection.find_one({"_id": ObjectId(position)})["username"] + "</p><p>" + collection.find_one({"_id": ObjectId(position)})["date"] + "</p><p id=\"title\">" + collection.find_one({"_id": ObjectId(position)})["title"] + "</p><p id=\"words\">" + collection.find_one({"_id": ObjectId(position)})["text"] + "</p><form action=\"/reply\"><input type=\"hidden\" id=\"reply\" name=\"position\" value=\"" + str(collection.find_one({"_id": ObjectId(position)})["_id"]) + "\"><input type=\"submit\" action=\"/reply\" id=\"reply\" value=\"Reply\"></form><div><br><br><textarea name=\"text\" rows=\"10\" cols=\"114\" required></textarea></div><br></div><br>"
+    #print(session["list"[position]])
+    return redirect("/page1")
 
 @app.route('/googleb4c3aeedcc2dd103.html')
 def render_google_verification():
